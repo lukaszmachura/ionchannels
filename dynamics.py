@@ -37,8 +37,8 @@ if __name__ == '__main__':
 
     # flags
     calc_trajectory = True
-    calc_sampen = True
-    plot_sampen = True
+    calc_sampen = not True
+    plot_sampen = not True
 
     # model
     icm = ic.IonChannelModel(states={'open': [1], 'open value': -1, 'close': [5], 'close value': 1})
