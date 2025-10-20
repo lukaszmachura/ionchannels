@@ -6,3 +6,9 @@ plots
 __pycache__
 .ipynb_checkpoints  
 .DS_Store
+.vscode
+corr3D
+correlation
+plots_*
+*.pkl
+*.png

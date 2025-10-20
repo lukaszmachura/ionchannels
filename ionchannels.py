@@ -181,102 +181,118 @@ class IonChannelModel:
     #
     # sections below are for defining forces and potentials
     #
-    def vq(self, x, params={'a': 0, 'd': 0}):
-        a = params['a'] if 'a' in params else 0
-        d = params['d'] if 'd' in params else 0
-        return (x-a)**2 - d  # simple quadratic
-    
-    def fq(self, x, params={'a': 0}):
-        a = params['a'] if 'a' in params else 0
-        return -2*(x-a) # simple quadratic
+    def vq(self, x, params={'xs': 0, 'a': 1, 'd': 0}):
+        xs = params.get('xs', 0)
+        a = params.get('a', 1)
+        d = params.get('d', 0)
+        return a*(x-xs)**2 - d  # simple quadratic
 
-    def vm(self, x, params={'a': 0, 'b': 1, 'd': 0}):
-        a = params['a'] if 'a' in params else 0
-        b = params['b'] if 'b' in params else 1
-        d = params['d'] if 'd' in params else 0
-        return np.where(x < a, 
-                        self.vq(x, {'a': a, 'd': 0}), 
-                        b*self.vq(x, {'a': a, 'd': 0})) - d # modified quadratic on x<0
+    def fq(self, x, params={'xs': 0, 'a': 1}):
+        xs = params.get('xs', 0)
+        a = params.get('a', 1)
+        return -2*a*(x-xs) # simple quadratic
 
-    def fm(self, x, params={'a': 0, 'b': 1}):
-        a = params['a'] if 'a' in params else 0
-        b = params['b'] if 'b' in params else 1
-        return np.where(x < a, 
-                        self.fq(x, {'a': a}), 
-                        b*self.fq(x, {'a': a}))  # modified quadratic on x<0
+    def vm(self, x, params={'xs': 0, 'a': 1, 'b': 1, 'd': 0}):
+        xs = params.get('xs', 0)
+        a = params.get('a', 1)
+        b = params.get('b', 1)
+        d = params.get('d', 0)
+        return np.where(x < xs, 
+                        self.vq(x, {'xs': xs, 'a': a, 'd': d}), 
+                        self.vq(x, {'xs': xs, 'a': b, 'd': d}))  
+                        # modified quadratic on both sides
 
-    def vp(self, x, params={'a': 0, 'b': 1, 'd': 0}):
-        a = params['a'] if 'a' in params else 0
-        b = params['b'] if 'b' in params else 1
-        d = params['d'] if 'd' in params else 0
-        return np.where(x > a, 
-                        self.vq(x, {'a': a, 'd': 0}), 
-                        b*self.vq(x, {'a': a, 'd': 0})) - d # modified quadratic on x>0
+    def fm(self, x, params={'xs': 0, 'a': 1, 'b': 1}):
+        xs = params.get('xs', 0)
+        a = params.get('a', 1)
+        b = params.get('b', 1)
+        return np.where(x < xs, 
+                        self.fq(x, {'xs': xs, 'a': a}), 
+                        self.fq(x, {'xs': xs, 'a': b}))  
+                        # modified quadratic on both sides
 
-    def fp(self, x, params={'a': 0, 'b': 1}):
-        a = params['a'] if 'a' in params else 0
-        b = params['b'] if 'b' in params else 1
-        return np.where(x > a, 
-                        self.fq(x, {'a': a}), 
-                        b*self.fq(x, {'a': a}))  # modified quadratic on x>0
+    def vp(self, x, params={'xs': 0, 'a': 1, 'b': 1, 'd': 0}):
+        xs = params.get('xs', 0)
+        a = params.get('a', 1)
+        b = params.get('b', 1)
+        d = params.get('d', 0)
+        return np.where(x > xs, 
+                        self.vq(x, {'xs': xs, 'a': a, 'd': d}), 
+                        self.vq(x, {'xs': xs, 'a': b, 'd': d}))  
+                        # modified quadratic on both sides
 
-    def vb(self, x, params={'a': 0, 'b': 1, 'c': 1, 'd': 0}):
-        a = params['a'] if 'a' in params else 0
-        b = params['b'] if 'b' in params else 1
-        c = params['c'] if 'c' in params else 1
-        d = params['d'] if 'd' in params else 0
-        return b * (x-a) ** 4 / 4 - c * (x-a) ** 2 / 2 + d*x  # double well
+    def fp(self, x, params={'xs': 0, 'a': 1, 'b': 1}):
+        xs = params.get('xs', 0)
+        a = params.get('a', 1)
+        b = params.get('b', 1)
+        return np.where(x > xs, 
+                        self.fq(x, {'xs': xs, 'a': a}), 
+                        self.fq(x, {'xs': xs, 'a': b}))
+                        # modified quadratic on x>0
+
+    def vb(self, x, params={'xs': 0, 'b': 1, 'c': 1, 'd': 0}):
+        xs = params.get('xs', 0)
+        b = params.get('b', 1)
+        c = params.get('c', 1)
+        d = params.get('d', 0)
+        return b * (x-xs) ** 4 / 4 - c * (x-xs) ** 2 / 2 + d*x  # double well
 
     def potential_asym_quadratic(self, x, 
-                                 params={'a': 1, 'bplus': 1, 'dplus': 0, 'bminus': 1, 'dminus': 0}):
-        a = params['a'] if 'a' in params else 1
-        bplus = params['bplus'] if 'bplus' in params else 1
-        dplus = params['dplus'] if 'dplus' in params else 0
-        bminus = params['bminus'] if 'bminus' in params else 1
-        dminus = params['dminus'] if 'dminus' in params else 0
+                                 params={'xs': 0, 
+                                         'aplus': 1, 'bplus': 1, 'dplus': 0, 
+                                         'aminus': 1, 'bminus': 1, 'dminus': 0}):
+        xs = params.get('xs', 0)
+        aplus = params.get('aplus', 1)
+        bplus = params.get('bplus', 1)
+        dplus = params.get('dplus', 0)
+        aminus = params.get('aminus', 1)
+        bminus = params.get('bminus', 1)
+        dminus = params.get('dminus', 0)
         return np.where(x > 0,
-                        self.vp(x, {'a': a, 'b': bplus, 'd': dplus}),
-                        self.vm(x, {'a': a, 'b': bminus, 'd': dminus}))
+                        self.vp(x, {'xs': xs, 'a': aplus, 'b': bplus, 'd': dplus}),
+                        self.vm(x, {'xs': xs, 'a': aminus, 'b': bminus, 'd': dminus}))
 
     def force_asym_quadratic(self, x, 
-                             params={'a': 1, 'bplus': 1, 'bminus': 1}):
-        a = params['a'] if 'a' in params else 1
-        bplus = params['bplus'] if 'bplus' in params else 1
-        bminus = params['bminus'] if 'bminus' in params else 1
+                             params={'xs': 0, 'aplus': 1, 'bplus': 1, 'aminus': 1, 'bminus': 1}):
+        xs = params.get('xs', 0)
+        aplus = params.get('aplus', 1)
+        bplus = params.get('bplus', 1)
+        aminus = params.get('aminus', 1)
+        bminus = params.get('bminus', 1)
         return np.where(x > 0, 
-                        self.fp(x, {'a': a, 'b': bplus}), 
-                        self.fm(x, {'a': a, 'b': bminus}))
+                        self.fp(x, {'xs': xs, 'a': aplus, 'b': bplus}), 
+                        self.fm(x, {'xs': xs, 'a': aminus, 'b': bminus}))
 
     def force_bistable(self, x, params={'a': 1, 'b': 1}):
         '''double well
         V = a / 4 * x**4 - b / 2 * x**2'''
-        a = params['a'] if 'a' in params else 1
-        b = params['b'] if 'b' in params else 1
+        a = params.get('a', 1)
+        b = params.get('b', 1)
         return - a * x**3 + b * x
 
     def potential_bistable(self, x, params={'a': 1, 'b': 1}):
-        a = params['a'] if 'a' in params else 1
-        b = params['b'] if 'b' in params else 1
+        a = params.get('a', 1)
+        b = params.get('b', 1)
         return a / 4 * x**4 - b / 2 * x**2
 
-    def force_x2(self, x, params={'a': 1, 'b': 1}):
+    def force_x2(self, x, params={'a': 0, 'b': 1}):
         '''monostable at x=a
         V = b / 2 * (x - a)**2'''
-        a = params['a'] if 'a' in params else 1
-        b = params['b'] if 'b' in params else 1
+        a = params.get('a', 0)
+        b = params.get('b', 1)
         return -b * (x - a)
 
-    def potential_x2(self, x, params={'a': 1, 'b': 1}):
-        a = params['a'] if 'a' in params else 1
-        b = params['b'] if 'b' in params else 1
+    def potential_x2(self, x, params={'a': 0, 'b': 1}):
+        a = params.get('a', 0)
+        b = params.get('b', 1)
         return b / 2 * (x - a)**2
 
     def force_const(self, x, params={'a': 1}):
-        a = params['a'] if 'a' in params else 1
+        a = params.get('a', 1)
         return -a
 
     def potential_const(self, x, params={'a': 1}):
-        a = params['a'] if 'a' in params else 1
+        a = params.get('a', 1)
         return a * x
 
     def force(self, x, params={'a': 1, 'b': 1}):
@@ -284,7 +300,7 @@ class IonChannelModel:
         return self.force_x2(x, params)
 
     def noise(self, rng, params={'a': 1}, levy_stat=True):
-        a = params['a'] if 'a' in params else 1
+        a = params.get('a', 1)
         if levy_stat:
             return my_levy_stable(1.25, 0, loc=a)
         return rng.standard_normal()
@@ -342,7 +358,7 @@ class IonChannelModel:
                     
                 
             else:
-                force_params['a'] = self.__states[f'{state} value']
+                force_params['xs'] = self.__states[f'{state} value']
                 if F.__name__ == self.force_const.__name__:
                     iks = F(0, force_params)
                 else:

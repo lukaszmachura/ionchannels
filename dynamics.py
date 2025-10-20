@@ -32,8 +32,8 @@ if __name__ == '__main__':
         os.makedirs('traj')
     if not os.path.exists('sampen'):
         os.makedirs('sampen')
-    if not os.path.exists('plots'):
-        os.makedirs('plots')
+    if not os.path.exists('plots_sampen'):
+        os.makedirs('plots_sampen')
 
     # flags
     calc_trajectory = True
@@ -120,7 +120,7 @@ if __name__ == '__main__':
         plt.grid(True)
         plt.legend()
         plt.tight_layout()
-        plt.savefig(f'plots/sampen_plot_bm{bfreq}.png', dpi=300)
+        plt.savefig(f'plots_sampen/sampen_plot_bm{bfreq}.png', dpi=300)
         
 
     # plt.figure(figsize=(10, 6))
