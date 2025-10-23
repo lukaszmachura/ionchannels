@@ -22,10 +22,10 @@ def autocorr_fft(x):
 
 
 # Potential and force (bistable: V(x) = x^4/4 - x^2/2)
-def V(x, a, b, c=0):
+def V(x, a, b, c=0.0):
     return a * x**4 / 4 - b * x**2 / 2 + c*x
 
-def F(x, a, b, c=0):
+def F(x, a, b, c=0.0):
     return -(a * x**3 - b * x + c)
 
 
