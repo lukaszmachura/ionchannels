@@ -287,13 +287,13 @@ class IonChannelModel:
         b = params.get('b', 1)
         return b / 2 * (x - a)**2
 
-    def force_const(self, x, params={'a': 1}):
-        a = params.get('a', 1)
-        return -a
+    def force_const(self, x, params={'xs': 1}):
+        xs = params.get('xs', 1)
+        return -xs
 
-    def potential_const(self, x, params={'a': 1}):
-        a = params.get('a', 1)
-        return a * x
+    def potential_const(self, x, params={'xs': 1}):
+        xs = params.get('xs', 1)
+        return xs * x
 
     def force(self, x, params={'a': 1, 'b': 1}):
         '''potential'''
@@ -354,7 +354,7 @@ class IonChannelModel:
                 tau += next_tau
                 
                 if F.__name__ == self.force_const.__name__:
-                    iks = F(0, {'a': self.__states[f'{state} value']})
+                    iks = F(0, {'xs': self.__states[f'{state} value']})
                     
                 
             else:

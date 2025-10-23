@@ -94,9 +94,9 @@ if __name__ == '__main__':
     plot_correlation = True
 
     # model
-    open_prob = 1
+    open_prob = 5
     open_val = -1
-    close_prob = 2
+    close_prob = 10
     close_val = 1
     icm = ic.IonChannelModel(states={'open': [open_prob], 'open value': open_val, 
                                      'close': [close_prob], 'close value': close_val})
@@ -106,7 +106,7 @@ if __name__ == '__main__':
 
     # simulation parameters
     h = 0.001
-    tend = 500
+    tend = 1000
     D = 0.01
 
     # symmetric cases
@@ -116,19 +116,20 @@ if __name__ == '__main__':
 
     # asymmetric cases
     # bext = 10
-    for bext in [#0.01, 0.1, 1, 10, 100, 1000
-        0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09,
-        0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
-        1, 2, 3, 4, 5, 6, 7, 8, 9,
-        10, 20, 30, 40, 50, 60, 70, 80, 90,
-        100, 200, 300, 400, 500, 600, 700, 800, 900, 1000
+    for bext in [0
+        # 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09,
+        # 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
+        # 1, 2, 3, 4, 5, 6, 7, 8, 9,
+        # 10, 20, 30, 40, 50, 60, 70, 80, 90,
+        # 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000
         ]:
         # if not os.path.exists(f'correlation/bext{bext}ap{apd:08.2f}'):
         #     os.makedirs(f'correlation/bext{bext}ap{apd:08.2f}')
         if not os.path.exists(f'correlation/bext{bext}_inter_sym'):
             os.makedirs(f'correlation/bext{bext}_inter_sym')
 
-        blist = [(bext, b, b, bext) for b in np.logspace(-3, 3, 50)]
+        blist = [(b, b, b, b) for b in np.logspace(-3, 3, 50)]
+        # blist = [(bext, b, b, bext) for b in np.logspace(-3, 3, 50)]
         # blist = [(bext, b, apd, bext) for b in np.logspace(-3, 3, 50)]
 
         if not calc_trajectory and not calc_correlation and not plot_correlation: 
@@ -227,7 +228,7 @@ if __name__ == '__main__':
                     # plt.plot(lags, corr, label=f'L a{am} b{bm}, R a{ap}, b{bp}', marker='o', markersize=4, alpha=0.7)
                     # plt.plot(lags, noise_corr, label=f'L a{am} b{bm}, R a{ap}, b{bp} (noise)', marker='o', markersize=4, alpha=0.7)
                     plt.plot(lags, corr, label=f'signal', alpha=1, lw=2)
-                    plt.bar(lags, noise_corr, width=10, color='tab:orange',  
+                    plt.bar(lags, noise_corr, width=1, color='tab:orange',  
                             label=f'noise', alpha=0.71) #, lw=2)
                     plt.title(f'a-={am}, b-={bm}, a+={ap}, b+={bp}')
                     plt.xlabel(r'$\tau$')
